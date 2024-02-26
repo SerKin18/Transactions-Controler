@@ -9,7 +9,6 @@ import {
   Button,
   Stack,
   Th,
-  TableCaption,
   TableContainer,
 } from "@chakra-ui/react";
 import { ITransactions } from "../types";
@@ -36,10 +35,9 @@ const ListItem: FC<ListItemProps> = ({
     <>
       <TableContainer mt="5px" border="1px">
         <Table size="sm" variant="striped" colorScheme="gray">
-          <TableCaption>PAGINATION</TableCaption>
           <Thead>
             <Tr bg="gray.500" color="white">
-              <Th color="white" isNumeric>
+              <Th color="white" textAlign="center">
                 Id
               </Th>
               <Th color="white">Status</Th>
@@ -57,7 +55,7 @@ const ListItem: FC<ListItemProps> = ({
             {transactions.map((transaction, i) => {
               return (
                 <Tr key={i}>
-                  <Td isNumeric>{transaction[0]}</Td>
+                  <Td textAlign="center">{transaction[0]}</Td>
                   <Td>{transaction[1]}</Td>
                   <Td>{transaction[2]}</Td>
                   <Td>{transaction[3]}</Td>

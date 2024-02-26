@@ -1,8 +1,8 @@
 import { Select } from "@chakra-ui/react";
-import { Box, Flex, Textarea } from "@chakra-ui/react";
+import { Box, Button, Flex } from "@chakra-ui/react";
 import ListItem from "./components/ListItem";
 import ModalWindow from "./components/Modal";
-import { Button, ButtonGroup } from "@chakra-ui/react";
+import { ButtonGroup } from "@chakra-ui/react";
 import ImportCVSButton from "./components/ImportCVSButton";
 import { useEffect, useState } from "react";
 import { ITransactions } from "./types";
@@ -37,8 +37,6 @@ function App() {
       if (updatedItemIndex > -1 && editedItem) {
         const updatedItem = editedItem.slice();
         updatedItem[1] = newStatus;
-        console.log(editedItem);
-        console.log(updatedItemIndex);
         prevTransactions?.splice(updatedItemIndex, 1, updatedItem);
       }
       return prevTransactions?.slice() || [];
@@ -91,7 +89,7 @@ function App() {
         transactionId={deletedItem?.[0] || ""}
       />
       <ModalWindow
-        titleModal={"Save file"}
+        titleModal={"Edit file"}
         modalOpen={!!editedItem}
         onClose={onCloseEditModal}
         onSave={onEditedSelectedItem}
@@ -111,13 +109,7 @@ function App() {
             >
               Transaction
             </Box>
-            {/* <Box h="150px" border="1px" borderRadius="8px"></Box> */}
-            <Textarea
-              h="150px"
-              border="1px"
-              borderRadius="8px"
-              placeholder="Here is a sample placeholder"
-            />
+            <Box h="150px" border="1px" borderRadius="8px"></Box>
           </Box>
           <Box w="80%" pl="30px" bg="white">
             <Flex
@@ -158,6 +150,7 @@ function App() {
                 <Button colorScheme="gray" variant="outline" size="md">
                   Export
                 </Button>
+                {/* <ExportCvSButton exportTransactions={preparedTransactions} /> */}
               </ButtonGroup>
             </Flex>
             <ListItem

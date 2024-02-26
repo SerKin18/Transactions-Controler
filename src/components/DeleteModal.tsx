@@ -14,7 +14,7 @@ interface DeleteModalProps {
   modalOpen: boolean;
   onClose: () => void;
   onDeleted: () => void;
-  transactionId:string;
+  transactionId: string;
 }
 const DeleteModal: FC<DeleteModalProps> = ({
   titleModal,
@@ -29,7 +29,10 @@ const DeleteModal: FC<DeleteModalProps> = ({
       <ModalContent>
         <ModalHeader>{titleModal}</ModalHeader>
         <ModalCloseButton />
-        <ModalBody>Do you want to delete "{transactionId}" transaction?</ModalBody>
+        <ModalBody textAlign="center">
+          Do you want to delete transaction?
+          <br />"{transactionId}"
+        </ModalBody>
         <ModalFooter>
           <Button colorScheme="gray" mr={3} onClick={onDeleted}>
             Delete

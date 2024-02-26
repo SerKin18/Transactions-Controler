@@ -1,17 +1,101 @@
-import { useDisclosure } from "@chakra-ui/react";
-import { Box, Flex, FormControl, Textarea } from "@chakra-ui/react";
+import { Select } from "@chakra-ui/react";
+import { Box, Flex, Textarea } from "@chakra-ui/react";
 import ListItem from "./components/ListItem";
 import ModalWindow from "./components/Modal";
-import Selects from "./components/Selects";
 import { Button, ButtonGroup } from "@chakra-ui/react";
+import ImportCVSButton from "./components/ImportCVSButton";
+import { useEffect, useState } from "react";
+import { ITransactions } from "./types";
+import Paginations from "./components/Pagination";
+import DeleteModal from "./components/DeleteModal";
 
-// import ModalWindow from "./modal";
+const LIMIT = 10;
+const INITIAL_CURRENT_PAGE = 1;
+
 function App() {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [transactions, setTransactions] = useState<ITransactions | null>(null);
+  const [curPage, setCurPage] = useState(INITIAL_CURRENT_PAGE);
+  const [statusFilter, setStatusFilter] = useState("");
+  const [typeFilter, setTypeFilter] = useState("");
+  const [deletedItem, setDeletedItem] = useState<ITransactions[number] | null>(
+    null
+  );
+  const [editedItem, setEditedItem] = useState<ITransactions[number] | null>(
+    null
+  );
 
+  const onCloseEditModal = () => {
+    setEditedItem(null);
+  };
+
+  const onEditedSelectedItem = (newStatus: string) => {
+    setTransactions((prevTransactions) => {
+      const updatedItemIndex =
+        prevTransactions?.findIndex((item) => {
+          return item[0] === editedItem?.[0];
+        }) || -1;
+      if (updatedItemIndex > -1 && editedItem) {
+        const updatedItem = editedItem.slice();
+        updatedItem[1] = newStatus;
+        console.log(editedItem);
+        console.log(updatedItemIndex);
+        prevTransactions?.splice(updatedItemIndex, 1, updatedItem);
+      }
+      return prevTransactions?.slice() || [];
+    });
+    onCloseEditModal();
+  };
+
+  const onDeleteSelectedElement = () => {
+    setTransactions((prevTransactions) => {
+      const res =
+        prevTransactions?.filter((item) => {
+          return item[0] !== deletedItem?.[0];
+        }) || null;
+      return res;
+    });
+    setDeletedItem(null);
+  };
+
+  const onCloseDeleteModal = () => {
+    setDeletedItem(null);
+  };
+  const startIndex = (curPage - 1) * LIMIT;
+
+  let filteredTransactions = transactions?.slice() || null;
+  if (filteredTransactions && statusFilter) {
+    filteredTransactions = filteredTransactions.filter(
+      (item) => item[1] === statusFilter
+    );
+  }
+
+  if (filteredTransactions && typeFilter) {
+    filteredTransactions = filteredTransactions.filter(
+      (item) => item[2] === typeFilter
+    );
+  }
+
+  const preparedTransactions =
+    filteredTransactions?.slice(startIndex, startIndex + LIMIT) || null;
+
+  useEffect(() => {
+    setCurPage(INITIAL_CURRENT_PAGE);
+  }, [statusFilter, typeFilter]);
   return (
     <>
-      <ModalWindow titleModal={"qwerty"} modalOpen={isOpen} onClose={onClose} />
+      <DeleteModal
+        titleModal={"Delete file"}
+        modalOpen={!!deletedItem}
+        onClose={onCloseDeleteModal}
+        onDeleted={onDeleteSelectedElement}
+        transactionId={deletedItem?.[0] || ""}
+      />
+      <ModalWindow
+        titleModal={"Save file"}
+        modalOpen={!!editedItem}
+        onClose={onCloseEditModal}
+        onSave={onEditedSelectedItem}
+      />
       <Box bg="white" h="100vh" w="100%">
         <Box w="100%" h="50px" bg="gray.500" />
         <Flex p="30px">
@@ -35,26 +119,62 @@ function App() {
               placeholder="Here is a sample placeholder"
             />
           </Box>
-          <FormControl
-            w="80%"
-            pl="30px"
-            bg="white"
-            justify="center"
-            direction="column"
-          >
-            <Flex w="100%" bg="white" align="center" justify="space-between">
-              <Selects />
+          <Box w="80%" pl="30px" bg="white">
+            <Flex
+              mb="30px"
+              w="100%"
+              bg="white"
+              align="center"
+              justify="space-between"
+            >
+              <Box display="flex">
+                <Select
+                  mr="20px"
+                  variant="outline"
+                  placeholder="Status"
+                  size="md"
+                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                    setStatusFilter(e.target.value)
+                  }
+                >
+                  <option value="Pending">Pending</option>
+                  <option value="Completed">Completed</option>
+                  <option value="Canceled">Canceled</option>
+                </Select>
+                <Select
+                  variant="outline"
+                  placeholder="Type"
+                  size="md"
+                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                    setTypeFilter(e.target.value)
+                  }
+                >
+                  <option value="Refill">Refill</option>
+                  <option value="Withdrawal">Withdrawal</option>
+                </Select>
+              </Box>
               <ButtonGroup pl="20px">
-                <Button colorScheme="gray" variant="outline" size="md">
-                  Import
-                </Button>
+                <ImportCVSButton setTransactions={setTransactions} />
                 <Button colorScheme="gray" variant="outline" size="md">
                   Export
                 </Button>
               </ButtonGroup>
             </Flex>
-            <ListItem openModal={onOpen} />
-          </FormControl>
+            <ListItem
+              setEditItem={setEditedItem}
+              transactions={preparedTransactions}
+              setDeletedItem={setDeletedItem}
+            />
+            <Paginations
+              curPage={curPage}
+              setCurPage={setCurPage}
+              pagesQuantity={
+                filteredTransactions?.length
+                  ? Math.ceil(filteredTransactions?.length / 10)
+                  : 0
+              }
+            />
+          </Box>
         </Flex>
       </Box>
     </>

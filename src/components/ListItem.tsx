@@ -1,90 +1,40 @@
-// @flow
 import { FC } from "react";
 import {
+  Box,
   Table,
   Thead,
   Tbody,
   Tr,
+  Td,
+  Button,
+  Stack,
   Th,
   TableCaption,
   TableContainer,
 } from "@chakra-ui/react";
-import Users from "./Users";
-import { IUser } from "./Types";
+import { ITransactions } from "../types";
 
 interface ListItemProps {
-  openModal: () => void;
+  transactions: ITransactions | null;
+  setDeletedItem: (value: ITransactions[number]) => void;
+  setEditItem: (value: ITransactions[number]) => void;
 }
 
-const ListItem: FC<ListItemProps> = ({ openModal }) => {
-  const userList: IUser[] = [
-    {
-      id: 1,
-      name: "Viktor Bulkin",
-      status: "Pending",
-      type: "Type",
-      amount: 100.0,
-    },
-    {
-      id: 2,
-      name: "Viktor Bulkin",
-      status: "Pending",
-      type: "Type",
-      amount: 200.0,
-    },
-    {
-      id: 3,
-      name: "Viktor Bulkin",
-      status: "Pending",
-      type: "Type",
-      amount: 300.0,
-    },
-    {
-      id: 1,
-      name: "Viktor Bulkin",
-      status: "Pending",
-      type: "Type",
-      amount: 100.0,
-    },
-    {
-      id: 2,
-      name: "Viktor Bulkin",
-      status: "Pending",
-      type: "Type",
-      amount: 200.0,
-    },
-    {
-      id: 3,
-      name: "Viktor Bulkin",
-      status: "Pending",
-      type: "Type",
-      amount: 300.0,
-    },
-    {
-      id: 1,
-      name: "Viktor Bulkin",
-      status: "Pending",
-      type: "Type",
-      amount: 100.0,
-    },
-    {
-      id: 2,
-      name: "Viktor Bulkin",
-      status: "Pending",
-      type: "Type",
-      amount: 200.0,
-    },
-    {
-      id: 3,
-      name: "Viktor Bulkin",
-      status: "Pending",
-      type: "Type",
-      amount: 300.0,
-    },
-  ];
+const ListItem: FC<ListItemProps> = ({
+  transactions,
+  setDeletedItem,
+  setEditItem,
+}) => {
+  if (!transactions) {
+    return (
+      <Box mt="20px" textAlign="center">
+        Add a transaction file...
+      </Box>
+    );
+  }
   return (
     <>
-      <TableContainer mt="50px" border="1px">
+      <TableContainer mt="5px" border="1px">
         <Table size="sm" variant="striped" colorScheme="gray">
           <TableCaption>PAGINATION</TableCaption>
           <Thead>
@@ -104,7 +54,37 @@ const ListItem: FC<ListItemProps> = ({ openModal }) => {
             </Tr>
           </Thead>
           <Tbody>
-            <Users userList={userList} openModal={openModal} />
+            {transactions.map((transaction, i) => {
+              return (
+                <Tr key={i}>
+                  <Td isNumeric>{transaction[0]}</Td>
+                  <Td>{transaction[1]}</Td>
+                  <Td>{transaction[2]}</Td>
+                  <Td>{transaction[3]}</Td>
+                  <Td isNumeric>{transaction[4]}</Td>
+                  <Td>
+                    <Stack direction="row" spacing={4} align="center">
+                      <Button
+                        colorScheme="cyan"
+                        variant="solid"
+                        size="sm"
+                        onClick={() => setEditItem(transaction)}
+                      >
+                        Edit
+                      </Button>
+                      <Button
+                        colorScheme="blue"
+                        variant="solid"
+                        size="sm"
+                        onClick={() => setDeletedItem(transaction)}
+                      >
+                        Delete
+                      </Button>
+                    </Stack>
+                  </Td>
+                </Tr>
+              );
+            })}
           </Tbody>
         </Table>
       </TableContainer>

@@ -1,5 +1,5 @@
 import { Select } from "@chakra-ui/react";
-import { Box, Button, Flex } from "@chakra-ui/react";
+import { Box, Flex } from "@chakra-ui/react";
 import ListItem from "./components/ListItem";
 import ModalWindow from "./components/Modal";
 import { ButtonGroup } from "@chakra-ui/react";
@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { ITransactions } from "./types";
 import Paginations from "./components/Pagination";
 import DeleteModal from "./components/DeleteModal";
+import ExportCvSButton from "./components/ExportCVSButton";
 
 const LIMIT = 10;
 const INITIAL_CURRENT_PAGE = 1;
@@ -30,11 +31,14 @@ function App() {
 
   const onEditedSelectedItem = (newStatus: string) => {
     setTransactions((prevTransactions) => {
-      const updatedItemIndex =
-        prevTransactions?.findIndex((item) => {
-          return item[0] === editedItem?.[0];
-        }) || -1;
-      if (updatedItemIndex > -1 && editedItem) {
+      const updatedItemIndex = prevTransactions?.findIndex((item) => {
+        return item[0] === editedItem?.[0];
+      });
+      if (
+        updatedItemIndex !== undefined &&
+        updatedItemIndex > -1 &&
+        editedItem
+      ) {
         const updatedItem = editedItem.slice();
         updatedItem[1] = newStatus;
         prevTransactions?.splice(updatedItemIndex, 1, updatedItem);
@@ -147,10 +151,7 @@ function App() {
               </Box>
               <ButtonGroup pl="20px">
                 <ImportCVSButton setTransactions={setTransactions} />
-                <Button colorScheme="gray" variant="outline" size="md">
-                  Export
-                </Button>
-                {/* <ExportCvSButton exportTransactions={preparedTransactions} /> */}
+                <ExportCvSButton exportTransactions={transactions} />
               </ButtonGroup>
             </Flex>
             <ListItem

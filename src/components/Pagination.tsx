@@ -3,10 +3,12 @@ import { Previous, Paginator, PageGroup, Next } from "chakra-paginator";
 
 const normalStyles = {
   bg: "white",
+  w: "30px",
 };
 
 const activeStyles = {
   bg: "cyan.300",
+  w: "30px",
 };
 
 function Paginations({

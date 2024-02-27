@@ -23,6 +23,7 @@ const ModalWindow: FC<ModalProps> = ({
   onSave,
 }) => {
   const [status, setStatus] = useState<string | null>(null);
+
   return (
     <Modal isOpen={modalOpen} onClose={onClose}>
       <ModalOverlay />
